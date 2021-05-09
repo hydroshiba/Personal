@@ -41,6 +41,28 @@ void _radix(vector<long long>::iterator _begin, vector<long long>::iterator _end
 
 ///Radix sort with auto calculated base
 void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end){
+	//Base calculation
+	long long _max = max(*max_element(_begin, _end), llabs(*min_element(_begin, _end)));
+	long long ex = 2;
+	int dist = _end - _begin;
+	while(pow(_max, 1.0 / (double)ex) > min(max(2, dist), 20000)) ++ex;
+	int base = pow(_max, 1.0 / (double)ex) + 1;
+
+	//Overflow protection
+	double _maxval = pow(base, ex);
+	if(_maxval > (double)LLONG_MAX) base = 512;
+
+	//Sort
+	_radix(_begin, _end, base);
+}
+
+///Radix sort with specified base
+void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end, int base){
+	_radix(_begin, _end, base);
+}
+
+///Negative elements radix sort
+void negative_radix(vector<long long>::iterator _begin, vector<long long>::iterator _end){
 	//Swapping all negative values to the front
 	//The code will then sort the negative and the positive segments separately
 	auto left = _begin, right = _end, pivot = _begin;
@@ -54,36 +76,18 @@ void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end)
 		++left;
 		--right;
 	}
-	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0LL) break;
-
-	//Base calculation for the positive segment
-	long long posi_max = *max_element(_begin, _end);
-	long long ex_posi = 2;
-	int dist_posi = _end - pivot;
-	while(pow(posi_max, 1.0 / (double)ex_posi) > min(max(2, dist_posi), 20000)) ++ex_posi;
-	int base_posi = pow(posi_max, 1.0 / (double)ex_posi) + 1;
-
-	//Base calculation for the negative segment
-	long long nega_max = llabs(*min_element(_begin, _end));
-	long long ex_nega = 2;
-	int dist_nega = pivot - _begin;
-	while(pow(nega_max, 1.0 / (double)ex_nega) > min(max(2, dist_nega), 20000)) ++ex_nega;
-	int base_nega = pow(nega_max, 1.0 / (double)ex_nega) + 1;
-
-	//Overflow protection
-	double _maxval = pow(base_posi, ex_posi);
-	if(_maxval > (double)LLONG_MAX) base_posi = 512;
-	_maxval = pow(base_nega, ex_nega);
-	if(_maxval > (double)LLONG_MAX) base_nega = 512;
+	for(pivot = right; pivot <= left; ++pivot)
+		if(pivot >= _begin && *pivot > 0LL) break;
 
 	//Sort
-	_radix(_begin, pivot, base_nega);
-	_radix(pivot, _end, base_posi);
+	radix(_begin, pivot);
+	radix(pivot, _end);
 }
 
-///Radix sort with specified base
-void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end, int base){
-	//Negative elements swapping
+///Negative elements radix sort with specified base
+void negative_radix(vector<long long>::iterator _begin, vector<long long>::iterator _end, int base){
+	//Swapping all negative values to the front
+	//The code will then sort the negative and the positive segments separately
 	auto left = _begin, right = _end, pivot = _begin;
 	--right;
 	while(true){
@@ -95,7 +99,8 @@ void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end,
 		++left;
 		--right;
 	}
-	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0LL) break;
+	for(pivot = right; pivot <= left; ++pivot)
+		if(pivot >= _begin && *pivot > 0LL) break;
 
 	//Sort
 	_radix(_begin, pivot, base);
