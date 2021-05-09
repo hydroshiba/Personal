@@ -54,7 +54,7 @@ void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end)
 		++left;
 		--right;
 	}
-	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0) break;
+	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0LL) break;
 
 	//Base calculation for the positive segment
 	long long posi_max = *max_element(_begin, _end);
@@ -87,15 +87,15 @@ void radix(vector<long long>::iterator _begin, vector<long long>::iterator _end,
 	auto left = _begin, right = _end, pivot = _begin;
 	--right;
 	while(true){
-		while(left < right && *left < 0) ++left;
-		while(right >= left && *right > 0) --right;
+		while(left < right && *left < 0LL) ++left;
+		while(right >= left && *right > 0LL) --right;
 		if(left >= right) break;
 
 		swap(*left, *right);
 		++left;
 		--right;
 	}
-	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0) break;
+	for(pivot = right; pivot <= left; ++pivot) if(*pivot > 0LL) break;
 
 	//Sort
 	_radix(_begin, pivot, base);
