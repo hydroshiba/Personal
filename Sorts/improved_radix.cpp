@@ -5,8 +5,8 @@ vector<long long> arr;
 
 ///The core sorting algorithm
 void _radix(vector<long long>::iterator _begin, vector<long long>::iterator _end, int base){
-	long long _max = *max_element(_begin, _end);
-	_max = max(_max, llabs(*min_element(_begin, _end)));
+	long long _max = LLONG_MIN;
+	for(auto i = _begin; i < _end; ++i) _max = max(_max, llabs(*i));
 
 	int loops = 0;
 	vector<unsigned long long> power = {1};
@@ -16,26 +16,32 @@ void _radix(vector<long long>::iterator _begin, vector<long long>::iterator _end
 	}
 
 	--loops;
+	int bucket[base];
+	vector<long long> helper(_end - _begin);
+
 	for(int pos = 0; pos <= loops; ++pos){
-		vector<long long> bucket[base];
 		unsigned long long div = power[pos];
 		unsigned long long mod = power[pos + 1];
+		memset(bucket, 0, base * sizeof(int));
 
 		for(auto it = _begin; it < _end; ++it){
 			int digit = (llabs((unsigned long long)*it) % mod) / div;
-			bucket[digit].push_back(*it);
+			++bucket[digit];
 		}
 
-		vector<long long>::iterator parser = _begin;
-		for(int i = 0; i < base; ++i){
-			int k = i;
-			if(*_begin < 0) k = base - i - 1;
+		for(int i = 1; i < base; ++i) bucket[i] += bucket[i - 1];
 
-			for(auto j : bucket[k]){
-				*parser = j;
-				++parser;
-			}
+		vector<long long>::iterator parser = (_end - 1);
+		while(parser >= _begin){
+			int digit = (llabs((unsigned long long)*parser) % mod) / div;
+			int i = bucket[digit] - 1;
+
+			helper[i] = *parser;
+			--bucket[digit];
+			--parser;
 		}
+
+		for(int i = 0; i < (_end - _begin); ++i) *(_begin + i) = dest[i];
 	}
 }
 
