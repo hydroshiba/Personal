@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> arr = {0, 3, 1000000, 5, 7, 214748367, 4, 6, 2, 8};
+vector<int> arr;
 auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
 mt19937 ran(seed);
 
@@ -16,7 +16,7 @@ void radix(_iterator _begin, _iterator _end){
 	vector<type> dOffset;
 	type *sOffset;
 
-	if(size * bytes < 1048576) sOffset = new type[size]{1, 2, 3, 4, 5};
+	if(size * bytes < 1048576) sOffset = new type[size]{0};
 	else{
 		dynamic = 1;
 		dOffset.resize(size);
