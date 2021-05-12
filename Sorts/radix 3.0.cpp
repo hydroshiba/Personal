@@ -184,8 +184,8 @@ void radix(_iterator _begin, _iterator _end){
 
 int main(){
 	int n;
-    cin >> n;
-    arr.resize(n);
+	cin >> n;
+	arr.resize(n);
 	for(auto &i : arr) i = ran() % 1000000000, i = abs(i);
 
 	clock_t start = clock();
