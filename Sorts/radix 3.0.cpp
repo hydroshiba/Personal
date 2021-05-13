@@ -1,29 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> arr;
-auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
-mt19937 ran(seed);
+///Put your CPU's total data cache size (in bytes) here
+const int CACHE = 3145728;
 
+///Support for negative integers isn't added yet, so be aware
 template<typename _iterator>
 void radix(_iterator _begin, _iterator _end){
-	//Setting up
+	///Setting up
 	int bytes = sizeof(*_begin);
 	int size = _end - _begin;
+	int local_size = min(size, CACHE / bytes);
 	bool dynamic = 0, turn = 1;
 
 	using type = typename iterator_traits<__typeof(_iterator)>::value_type;
+	type Offset[local_size];
 	vector<type> dOffset;
-	type *sOffset;
-
-	if(size * bytes < 1048576) sOffset = new type[size]{0};
-	else{
+	if(size > local_size){
+		dOffset.resize(size - local_size);
 		dynamic = 1;
-		dOffset.resize(size);
 	}
 
 
-	//Histogram creation
+	///Histogram creation
 	int bucket1[512] = {0};
 	int bucket2[512] = {0};
 	int bucket3[512] = {0};
@@ -54,7 +53,7 @@ void radix(_iterator _begin, _iterator _end){
 	}
 
 
-	//Pass 1
+	///Pass 1
 	if(bucket1[num1] == size);
 	else{
 		for(int i = 1; i < 512; ++i) bucket1[i] += bucket1[i - 1];
@@ -63,8 +62,9 @@ void radix(_iterator _begin, _iterator _end){
 			int digit = *i & 511;
 			--bucket1[digit];
 
-			if(dynamic) dOffset[bucket1[digit]] = *i;
-			else *(sOffset + bucket1[digit]) = *i;
+			if(bucket1[digit] >= local_size)
+				*(dOffset.begin() + (bucket1[digit] - local_size)) = *i;
+			else *(Offset + bucket1[digit]) = *i;
 		}
 		else{
 			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
@@ -72,7 +72,8 @@ void radix(_iterator _begin, _iterator _end){
 				--bucket1[digit];
 				*(_begin + bucket1[digit]) = *i;
 			}
-			else for(auto i = (sOffset + (size - 1)); i >= sOffset; --i){
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
 				int digit = *i & 511;
 				--bucket1[digit];
 				*(_begin + bucket1[digit]) = *i;
@@ -83,7 +84,7 @@ void radix(_iterator _begin, _iterator _end){
 	}
 
 
-	//Pass 2
+	///Pass 2
 	if(bucket2[num2] == size);
 	else{
 		for(int i = 1; i < 512; ++i) bucket2[i] += bucket2[i - 1];
@@ -92,8 +93,9 @@ void radix(_iterator _begin, _iterator _end){
 			int digit = (*i >> 9) & 511;
 			--bucket2[digit];
 
-			if(dynamic) dOffset[bucket2[digit]] = *i;
-			else *(sOffset + bucket2[digit]) = *i;
+			if(bucket2[digit] >= local_size)
+				*(dOffset.begin() + (bucket2[digit] - local_size)) = *i;
+			else *(Offset + bucket2[digit]) = *i;
 		}
 		else{
 			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
@@ -101,7 +103,8 @@ void radix(_iterator _begin, _iterator _end){
 				--bucket2[digit];
 				*(_begin + bucket2[digit]) = *i;
 			}
-			else for(auto i = (sOffset + (size - 1)); i >= sOffset; --i){
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
 				int digit = (*i >> 9) & 511;
 				--bucket2[digit];
 				*(_begin + bucket2[digit]) = *i;
@@ -112,7 +115,7 @@ void radix(_iterator _begin, _iterator _end){
 	}
 
 
-	//Pass 3
+	///Pass 3
 	if(bucket3[num3] == size);
 	else{
 		for(int i = 1; i < 512; ++i) bucket3[i] += bucket3[i - 1];
@@ -121,8 +124,9 @@ void radix(_iterator _begin, _iterator _end){
 			int digit = (*i >> 18) & 511;
 			--bucket3[digit];
 
-			if(dynamic) dOffset[bucket3[digit]] = *i;
-			else *(sOffset + bucket3[digit]) = *i;
+			if(bucket3[digit] >= local_size)
+				*(dOffset.begin() + (bucket3[digit] - local_size)) = *i;
+			else *(Offset + bucket3[digit]) = *i;
 		}
 		else{
 			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
@@ -130,7 +134,8 @@ void radix(_iterator _begin, _iterator _end){
 				--bucket3[digit];
 				*(_begin + bucket3[digit]) = *i;
 			}
-			else for(auto i = (sOffset + (size - 1)); i >= sOffset; --i){
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
 				int digit = (*i >> 18) & 511;
 				--bucket3[digit];
 				*(_begin + bucket3[digit]) = *i;
@@ -141,7 +146,7 @@ void radix(_iterator _begin, _iterator _end){
 	}
 
 
-	//Pass 4
+	///Pass 4
 	if(bucket4[num4] == size);
 	else{
 		for(int i = 1; i < 512; ++i) bucket4[i] += bucket4[i - 1];
@@ -150,8 +155,9 @@ void radix(_iterator _begin, _iterator _end){
 			int digit = (*i >> 27) & 511;
 			--bucket4[digit];
 
-			if(dynamic) dOffset[bucket4[digit]] = *i;
-			else *(sOffset + bucket4[digit]) = *i;
+			if(bucket4[digit] >= local_size)
+				*(dOffset.begin() + (bucket4[digit] - local_size)) = *i;
+			else *(Offset + bucket4[digit]) = *i;
 		}
 		else{
 			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
@@ -159,7 +165,8 @@ void radix(_iterator _begin, _iterator _end){
 				--bucket4[digit];
 				*(_begin + bucket4[digit]) = *i;
 			}
-			else for(auto i = (sOffset + (size - 1)); i >= sOffset; --i){
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
 				int digit = (*i >> 27) & 511;
 				--bucket4[digit];
 				*(_begin + bucket4[digit]) = *i;
@@ -170,26 +177,129 @@ void radix(_iterator _begin, _iterator _end){
 	}
 
 
-	//If type is 32-bit then stop
-	if(bytes = 4){
+	///If type is 32-bit then stop
+	if(bytes == 4){
 		if(!turn) for(auto i = _begin; i < _end; ++i){
-			if(dynamic) *i = dOffset[(i - _begin)];
-			else *i = *(sOffset + (i - _begin));
+			if(i - _begin >= local_size) *i = *(dOffset.begin() + ((i - _begin) - local_size));
+			else *i = *(Offset + (i - _begin));
 		}
-		if(!dynamic) delete sOffset;
-
 		return;
 	}
+
+
+	///Pass 5
+	if(bucket5[num5] == size);
+	else{
+		for(int i = 1; i < 512; ++i) bucket5[i] += bucket5[i - 1];
+
+		if(turn) for(auto i = _end - 1; i >= _begin; --i){
+			int digit = (*i >> 36) & 511;
+			--bucket5[digit];
+
+			if(bucket5[digit] >= local_size)
+				*(dOffset.begin() + (bucket5[digit] - local_size)) = *i;
+			else *(Offset + bucket5[digit]) = *i;
+		}
+		else{
+			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
+				int digit = (*i >> 36) & 511;
+				--bucket5[digit];
+				*(_begin + bucket5[digit]) = *i;
+			}
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
+				int digit = (*i >> 36) & 511;
+				--bucket5[digit];
+				*(_begin + bucket5[digit]) = *i;
+			}
+		}
+
+		turn = !turn;
+	}
+
+
+	///Pass 6
+	if(bucket6[num6] == size);
+	else{
+		for(int i = 1; i < 512; ++i) bucket6[i] += bucket6[i - 1];
+
+		if(turn) for(auto i = _end - 1; i >= _begin; --i){
+			int digit = (*i >> 45) & 511;
+			--bucket6[digit];
+
+			if(bucket6[digit] >= local_size)
+				*(dOffset.begin() + (bucket6[digit] - local_size)) = *i;
+			else *(Offset + bucket6[digit]) = *i;
+		}
+		else{
+			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
+				int digit = (*i >> 45) & 511;
+				--bucket6[digit];
+				*(_begin + bucket6[digit]) = *i;
+			}
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
+				int digit = (*i >> 45) & 511;
+				--bucket6[digit];
+				*(_begin + bucket6[digit]) = *i;
+			}
+		}
+
+		turn = !turn;
+	}
+
+
+	///Pass 7
+	if(bucket7[num7] == size);
+	else{
+		for(int i = 1; i < 512; ++i) bucket7[i] += bucket7[i - 1];
+
+		if(turn) for(auto i = _end - 1; i >= _begin; --i){
+			int digit = (*i >> 54) & 511;
+			--bucket7[digit];
+
+			if(bucket7[digit] >= local_size)
+				*(dOffset.begin() + (bucket7[digit] - local_size)) = *i;
+			else *(Offset + bucket7[digit]) = *i;
+		}
+		else{
+			if(dynamic) for(auto i = dOffset.end() - 1; i >= dOffset.begin(); --i){
+				int digit = (*i >> 54) & 511;
+				--bucket7[digit];
+				*(_begin + bucket7[digit]) = *i;
+			}
+
+			for(auto i = (Offset + (local_size - 1)); i >= Offset; --i){
+				int digit = (*i >> 54) & 511;
+				--bucket7[digit];
+				*(_begin + bucket7[digit]) = *i;
+			}
+		}
+
+		turn = !turn;
+	}
+
+
+	///Check if the sorted values are in the helper or the original array
+	///If in the helper array then swap
+	if(!turn) for(auto i = _begin; i < _end; ++i){
+		if(i - _begin >= local_size) *i = *(dOffset.begin() + ((i - _begin) - local_size));
+		else *i = *(Offset + (i - _begin));
+	}
+	return;
 }
 
 int main(){
+	auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+	mt19937_64 ran(seed);
+
 	int n;
 	cin >> n;
-	arr.resize(n);
-	for(auto &i : arr) i = ran() % 1000000000, i = abs(i);
+	vector<long long> arr(n);
+	for(auto &i : arr) i = ran(), i = abs(i);
 
 	clock_t start = clock();
 	radix(arr.begin(), arr.end());
 	clock_t finish = clock();
-	cout << (float)(finish-start)/CLOCKS_PER_SEC;
+	cout << "Time complete: " << (float)(finish-start)/CLOCKS_PER_SEC << endl;
 }
