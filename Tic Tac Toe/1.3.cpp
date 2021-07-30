@@ -199,7 +199,7 @@ int DP(int turn, int mask, int alpha = -inf, int beta = inf){
 			}
 
 			//Alpha - Beta pruning
-			if(res >= beta) return cell = -1, res;
+			if(res >= beta) return res;
 			alpha = max(alpha, val);
 			if(res == 2) return res;
 		}
