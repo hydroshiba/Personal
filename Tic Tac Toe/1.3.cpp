@@ -184,11 +184,6 @@ int DP(int turn, int mask, int alpha = -inf, int beta = inf){
 				res = val;
 				cell = i;
 			}
-
-			//Alpha - Beta pruning
-			if(res <= alpha) return res;
-			beta = min(beta, val);
-			if(res == 0) return res;
 		}
 		//If O turn then minimize chances of winning (maximize the value)
 		else{
@@ -197,11 +192,6 @@ int DP(int turn, int mask, int alpha = -inf, int beta = inf){
 				res = val;
 				cell = i;
 			}
-
-			//Alpha - Beta pruning
-			if(res >= beta) return res;
-			alpha = max(alpha, val);
-			if(res == 2) return res;
 		}
 	}
 
