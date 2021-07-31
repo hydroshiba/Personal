@@ -117,7 +117,7 @@ constexpr int inf = INT_MAX / 2;
 int dp[3][maxn], trace[3][maxn];
 
 //0 = X win, 1 = draw, 2 = X lose (higher value = worse)
-int DP(int turn, int mask, int alpha = -inf, int beta = inf){
+int DP(int turn, int mask){
 	//Win
 	if(win(mask)) return (turn == X ? 2 : 0);
 
@@ -179,7 +179,7 @@ int DP(int turn, int mask, int alpha = -inf, int beta = inf){
 
 		//If X turn then maximize chances of winning (minimize the value)
 		if(turn == X){
-			int val = DP(O, new_mask, alpha, beta);
+			int val = DP(O, new_mask);
 			if(val < res){
 				res = val;
 				cell = i;
@@ -187,7 +187,7 @@ int DP(int turn, int mask, int alpha = -inf, int beta = inf){
 		}
 		//If O turn then minimize chances of winning (maximize the value)
 		else{
-			int val = DP(X, new_mask, alpha, beta);
+			int val = DP(X, new_mask);
 			if(val > res){
 				res = val;
 				cell = i;
