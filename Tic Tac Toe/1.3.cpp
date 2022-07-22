@@ -234,11 +234,13 @@ int main(){
 
 	while(!win(mask) && !draw(mask)){
 		if(turn == O){
+            		cout << "Please enter your move:" << endl;
+
 			int cell;
 			cin >> cell;
 
 			while(cell < 0 || cell > 8 || getBit(mask, cell) != 0){
-				cout << "Invalid move!\n";
+				cout << "Invalid move!" << endl;
 				cin >> cell;
 			}
 
@@ -248,7 +250,7 @@ int main(){
 		else{
 			int cur = DP(turn, mask);
 
-			cout << '\n' << trace[turn][mask] << '\n';
+			cout << endl << trace[turn][mask] << endl;
 			modifyBit(mask, trace[turn][mask], X);
 			showBoard(mask);
 		}
@@ -258,10 +260,10 @@ int main(){
 	}
 
 	if(win(mask)){
-		if(turn == O) cout << "COMPUTER WON THE GAME\n";
-		else cout << "HUMAN WON THE GAME\n";
+		if(turn == O) cout << "COMPUTER WON THE GAME" << endl;
+		else cout << "HUMAN WON THE GAME" << endl;
 	}
-	else cout << "IT'S A DRAW!\n";
+	else cout << "IT'S A DRAW!" << endl;
 
 	system("pause");
 }
